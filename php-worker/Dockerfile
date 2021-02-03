@@ -62,7 +62,8 @@ fi
 #Install GD package:
 ARG INSTALL_GD=false
 RUN if [ ${INSTALL_GD} = true ]; then \
-   apk add --update --no-cache libpng-dev; \
+   apk add --update --no-cache freetype-dev libjpeg-turbo-dev jpeg-dev libpng-dev; \
+   docker-php-ext-configure gd --with-freetype-dir=/usr/lib/ --with-jpeg-dir=/usr/lib/ --with-png-dir=/usr/lib/ && \
    docker-php-ext-install gd \
 ;fi
 
@@ -138,7 +139,7 @@ ARG INSTALL_ZIP_ARCHIVE=false
 RUN set -eux; \
   if [ ${INSTALL_ZIP_ARCHIVE} = true ]; then \
     apk --update add libzip-dev && \
-    if [ ${LARADOCK_PHP_VERSION} = "7.3" ] || [ ${LARADOCK_PHP_VERSION} = "7.4" ]; then \
+    if [ ${LARADOCK_PHP_VERSION} = "7.3" ] || [ ${LARADOCK_PHP_VERSION} = "7.4" ] || [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
       docker-php-ext-configure zip; \
     else \
       docker-php-ext-configure zip --with-libzip; \
@@ -166,7 +167,7 @@ RUN if [ ${INSTALL_AMQP} = true ]; then \
 # Install Cassandra drivers:
 ARG INSTALL_CASSANDRA=false
 RUN if [ ${INSTALL_CASSANDRA} = true ]; then \
-  apk --update add cassandra-cpp-driver-dev gmp-dev libuv-dev \
+  apk --update add cassandra-cpp-driver \
   ;fi
 
 WORKDIR /usr/src
@@ -176,7 +177,7 @@ RUN if [ ${INSTALL_CASSANDRA} = true ]; then \
   && phpize \
   && mkdir -p /usr/src/php-driver/build \
   && cd /usr/src/php-driver/build \
-  && ../ext/configure > /dev/null \
+  && ../ext/configure --with-php-config=/usr/bin/php-config7.1 > /dev/null \
   && make clean >/dev/null \
   && make >/dev/null 2>&1 \
   && make install \
