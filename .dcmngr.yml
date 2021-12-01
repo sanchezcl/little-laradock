@@ -1,25 +1,14 @@
 sh_default_service: "workspace"
-sh_always_admin: true
+sh_always_admin: false
 build_default_containers:
-  - pgadmin
-  - php-fpm
-  - php-worker
-  - nginx
-  - postgres
-  - workspace
-  - redis
-  - mongo
-  - mongo-webui
-  - docker-in-docker
+- workspace
+- php-fpm
+- nginx
+- mysql
 up_default_containers:
-  - pgadmin
-  - php-fpm
-  - nginx
-  - postgres
-  - workspace
-  - redis
-  - mongo
-  - docker-in-docker
+- workspace
+- nginx
+- mysql
 watch_configs:
   service: ""
   command: ""
